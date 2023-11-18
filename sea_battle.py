@@ -63,12 +63,17 @@ class ship:
         if all(-1 < point[0] < 6 for point in self.ship_point) and all(-1 < point[1] < 6 for point in self.ship_point):
             pass
         else:
+            print('Точки находяться за пределами поля')
             raise Exception
-            #print('Точки находяться за пределами поля')
         for i in range(self.length):
-            if not self.ship_point[i][0]==self.nose_ship[0]+i:
-                raise Exception
-                #print('Корабль не наодной линии')
+            if self.direction == 'row':
+                if not self.ship_point[i][0] == self.nose_ship[0] + i:
+                    print('Корабль не наодной линии')
+                    raise Exception
+            else:
+                if not self.ship_point[i][1] == self.nose_ship[1] + i:
+                    print('Корабль не наодной линии')
+                    raise Exception
 
 class board:
     hid = True
@@ -317,24 +322,40 @@ class game:
 
 
     def greet(self):
-        pass
+        print('Морской бой - игра для двух участников, в которой игроки по очереди сообщают координаты на карте соперника. Если у врага с этими координатами имеется "корабль", то корабль или его палуба убивается, попавший делает еще один ход. Цель игрока: первым убить все игровые "корабли" врага.')
+        print('Игровое поле — квадрат 6×6 у каждого игрока, на котором размещается флот кораблей. Горизонтали нумеруются сверху вниз, а вертикали слева направо от 1 до 6.')
+        print('Размещаются:\n1 корабль — ряд из 3 клеток\n2 корабль — ряд из 2 клеток\n3 корабль — ряд из 1 клеток')
+        print('При размещении корабли не могут касаться друг друга сторонами и углами')
+        print('Игрок, выполняющий ход, совершает выстрел — вводит координаты клетки, в которой, по его мнению, находится корабль противника, например, «2 3».')
+        print(' |1|2|3')
+        print('1|O|O|O')
+        print('2|O|O|X')
+        print('3|O|O|O\n')
+
 
     def creat_board(self,player):
         if input(f'{player.name}. \nСоздать рандомную доску - 0\n')=='0':
             self.random_board(player.board)
         else:
+            print('Чтобы поставить корабль надо указать координаты всех ячеек через пробел. Пример «2 3 3 3»')
+            print(' |1|2|3')
+            print('1|O|O|O')
+            print('2|O|O|■')
+            print('3|O|O|■\n\n')
             for i in range(3):
                 for kol in range(i+1):
                     while True:
                         try:
+                            player.board.render()
                             ship_s = list(map(int, list(input(f'Введите координаты {3-i} палубного корабля\n').split(" "))))
                             ship_ = []
+                            if len(ship_s)/2 != 3 - i:
+                                continue
                             for j in range(0,(3-i)*2,2):
                                 ship_.append([ship_s[j]-1, ship_s[j+1]-1])
                             ship_p=ship(ship_)
                             ship_p.out()
                             player.board.add_ship(ship_p)
-                            player.board.render()
                             break
                         except:
                             continue
